@@ -20,7 +20,7 @@ interface AnalyticsData {
   weeklyData: { day: string; tasks: number; habits: number; xp: number }[];
   categoryData: { name: string; value: number }[];
   monthlyXP: { day: number; xp: number }[];
-  radarData: { subject: string; value: number }[];
+  radarData: { subject: string; value: number; color: string }[];
 }
 
 export default function AnalyticsPage() {
@@ -91,7 +91,7 @@ export default function AnalyticsPage() {
           </ResponsiveContainer>
           {/* Breakdown */}
           <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-2">
-            {data.radarData.map((d: { subject: string; value: number; color: string }) => (
+            {data.radarData.map((d) => (
               <div key={d.subject} className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: d.color || "#00f5ff" }} />
                 <span className="text-[11px] font-mono flex-1 text-slate-500">{d.subject}</span>
