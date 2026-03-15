@@ -4,6 +4,7 @@ import { SessionProvider } from "next-auth/react";
 import Sidebar from "@/components/sidebar/Sidebar";
 import RightPanel from "@/components/sidebar/RightPanel";
 import MobileNav from "@/components/sidebar/MobileNav";
+import AIChatbot from "@/components/dashboard/AIChatbot";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -19,6 +20,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </div>
         <RightPanel />
       </div>
+      <AIChatbot />
     </SessionProvider>
   );
 }
