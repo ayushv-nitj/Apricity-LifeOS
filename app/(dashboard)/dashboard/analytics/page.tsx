@@ -86,7 +86,7 @@ export default function AnalyticsPage() {
               <Radar name="Life Balance" dataKey="value" stroke="#00f5ff" fill="#00f5ff" fillOpacity={0.12} strokeWidth={2}
                 dot={{ fill: "#00f5ff", r: 3, strokeWidth: 0 }} />
               <Tooltip contentStyle={tooltipStyle} labelStyle={{ color: "#00f5ff" }}
-                formatter={(v: number) => [`${v}/100`, "Score"]} />
+                formatter={(v) => [`${v}/100`, "Score"]} />
             </RadarChart>
           </ResponsiveContainer>
           {/* Breakdown */}
