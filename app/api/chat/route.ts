@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import Task from "@/models/Task";
@@ -8,7 +8,7 @@ import Mood from "@/models/Mood";
 import Workout from "@/models/Workout";
 import Academic from "@/models/Academic";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function POST(req: NextRequest) {
   try {
@@ -51,22 +51,23 @@ USER DATA SNAPSHOT:
 - Avg energy (last 7 days): ${avgEnergy}/10
 - Academic subjects: ${academics.map(a => `${a.name} (${a.progress}%, ${a.hoursStudied}h studied)`).join(", ") || "none"}`;
 
-    const chatMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
-      { role: "system", content: systemPrompt },
-      ...messages.map((m: { role: string; content: string }) => ({
-        role: m.role as "user" | "assistant",
-        content: m.content,
-      })),
-    ];
+    // Build chat history (exclude last message, that's the new prompt)
+    const history = messages.slice(0, -1).map((m: { role: string; content: string }) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }],
+    }));
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: chatMessages,
-      max_tokens: 400,
-      temperature: 0.7,
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.0-flash",
+      systemInstruction: systemPrompt,
     });
 
-    const reply = completion.choices[0]?.message?.content ?? "No response generated.";
+    const chat = model.startChat({ history });
+
+    const lastMessage = messages[messages.length - 1].content;
+    const result = await chat.sendMessage(lastMessage);
+    const reply = result.response.text();
+
     return NextResponse.json({ reply });
 
   } catch (err) {
