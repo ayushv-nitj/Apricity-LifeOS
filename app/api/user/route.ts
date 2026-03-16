@@ -17,6 +17,6 @@ export async function PATCH(req: NextRequest) {
   await connectDB();
   const body = await req.json();
   delete body.password; // never update password here
-  const user = await User.findByIdAndUpdate(session.user.id, body, { new: true }).select("-password");
+  const user = await User.findByIdAndUpdate(session.user.id, body, { returnDocument: "after" }).select("-password");
   return NextResponse.json(user);
 }

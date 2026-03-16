@@ -6,7 +6,12 @@ export default async function proxy(request: NextRequest) {
   const session = await auth();
   const { pathname } = request.nextUrl;
 
-  const isProtected = !pathname.startsWith("/login") && !pathname.startsWith("/signup") && !pathname.startsWith("/api/auth");
+  const isProtected =
+    !pathname.startsWith("/login") &&
+    !pathname.startsWith("/signup") &&
+    !pathname.startsWith("/forgot-password") &&
+    !pathname.startsWith("/reset-password") &&
+    !pathname.startsWith("/api/auth");
 
   if (isProtected && !session) {
     return NextResponse.redirect(new URL("/login", request.url));

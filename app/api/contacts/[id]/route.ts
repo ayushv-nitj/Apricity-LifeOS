@@ -9,7 +9,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   await connectDB();
   const { id } = await params;
   const body = await req.json();
-  const contact = await Contact.findOneAndUpdate({ _id: id, userId: session.user.id }, body, { new: true });
+  const contact = await Contact.findOneAndUpdate({ _id: id, userId: session.user.id }, body, { returnDocument: "after" });
   return NextResponse.json(contact);
 }
 

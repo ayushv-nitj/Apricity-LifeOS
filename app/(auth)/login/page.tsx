@@ -23,13 +23,17 @@
 "use client";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Zap, Shield } from "lucide-react";
+import { Suspense } from "react";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const params = useSearchParams();
+  // ?reset=true comes from the reset-password page on success
+  const justReset = params.get("reset") === "true";
 
   // Controlled form state — both fields in one object for simplicity
   const [form, setForm] = useState({ email: "", password: "" });
@@ -104,6 +108,14 @@ export default function LoginPage() {
             <span className="text-xs text-slate-400 font-mono uppercase tracking-widest">Secure Access</span>
           </div>
 
+          {/* Success banner shown after a password reset */}
+          {justReset && (
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              className="text-emerald-400 text-xs font-mono bg-emerald-400/10 border border-emerald-400/20 rounded-lg px-3 py-2 mb-5">
+              ✓ Password updated. You can now log in with your new password.
+            </motion.p>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email field */}
             <div>
@@ -122,9 +134,15 @@ export default function LoginPage() {
 
             {/* Password field with show/hide toggle */}
             <div>
-              <label className="block text-xs text-slate-400 font-mono uppercase tracking-wider mb-2">
-                Password
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-xs text-slate-400 font-mono uppercase tracking-wider">
+                  Password
+                </label>
+                {/* Forgot password link */}
+                <Link href="/forgot-password" className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors font-mono">
+                  Forgot password?
+                </Link>
+              </div>
               <div className="relative">
                 <input
                   type={showPass ? "text" : "password"}
@@ -183,5 +201,13 @@ export default function LoginPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -47,11 +47,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // Connect to DB and look up the user by email.
         await connectDB();
         const user = await User.findOne({ email: credentials.email });
+        console.log("[auth] user lookup:", credentials.email, "found:", !!user);
         if (!user) return null;
 
         // bcrypt.compare checks the plain-text password against the stored hash.
-        // We NEVER store plain-text passwords — only the bcrypt hash.
         const valid = await bcrypt.compare(credentials.password as string, user.password);
+        console.log("[auth] password valid:", valid);
         if (!valid) return null;
 
         // Return a plain object with the fields NextAuth will put in the token.

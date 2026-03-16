@@ -12,7 +12,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { id } = await params;
   const body = await req.json();
   const prev = await Goal.findOne({ _id: id, userId: session.user.id });
-  const goal = await Goal.findOneAndUpdate({ _id: id, userId: session.user.id }, body, { new: true });
+  const goal = await Goal.findOneAndUpdate({ _id: id, userId: session.user.id }, body, { returnDocument: "after" });
 
   if (goal && body.status === "completed" && prev?.status !== "completed") {
     await User.findByIdAndUpdate(session.user.id, { $inc: { xp: goal.xpReward } });

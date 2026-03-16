@@ -47,7 +47,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const task = await Task.findOneAndUpdate(
     { _id: id, userId: session.user.id },
     { ...body, ...(body.status === "completed" ? { completedAt: new Date() } : {}) },
-    { new: true } // Return the updated document, not the original
+    { returnDocument: "after" } // Return the updated document, not the original
   );
 
   // XP and leveling logic — only runs when a task is marked complete
