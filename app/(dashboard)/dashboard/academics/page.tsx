@@ -1,3 +1,29 @@
+/**
+ * app/(dashboard)/dashboard/academics/page.tsx — Subject Tracker
+ *
+ * "use client" — all state, fetch calls, and interactions happen in the browser.
+ *
+ * Tracks academic subjects with:
+ *  - Mastery progress bar (0-100%) — drag the slider to update
+ *  - Hours studied counter — editable inline when in edit mode
+ *  - Grade badge (A+, A, B+, etc.)
+ *  - Color-coded dot per subject (cycles through the `colors` array)
+ *
+ * Inline editing pattern:
+ *  - `editing` state holds the _id of the subject currently being edited
+ *  - Clicking "edit" on a card sets `editing` to that subject's _id
+ *  - The progress slider and hours input only appear when `editing === sub._id`
+ *  - `onMouseUp` / `onTouchEnd` on the slider fires the PATCH request when
+ *    the user releases the slider (not on every pixel of movement)
+ *  - `onBlur` on the hours input fires the PATCH when the user clicks away
+ *
+ * Stats bar at the top aggregates across all subjects:
+ *  - Total study hours: sum of hoursStudied
+ *  - Avg mastery: mean of all progress values
+ *  - Subject count
+ *
+ * Data source: GET/POST /api/academics, PATCH/DELETE /api/academics/:id
+ */
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";

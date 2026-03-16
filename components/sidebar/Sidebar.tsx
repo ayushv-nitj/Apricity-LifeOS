@@ -22,7 +22,7 @@ import { motion } from "framer-motion";
 import { signOut } from "next-auth/react";
 import {
   LayoutDashboard, Briefcase, GraduationCap, Dumbbell, Apple,
-  Heart, Users, Target, BarChart3, Settings, LogOut, Zap, BookOpen,
+  Heart, Users, Target, BarChart3, Settings, LogOut, Zap, BookOpen, Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +42,7 @@ const navItems = [
   { href: "/dashboard/goals",         label: "Goals / Quests", icon: Target,          color: "text-blue-400" },
   { href: "/dashboard/notes",         label: "Knowledge Vault",icon: BookOpen,        color: "text-teal-400" },
   { href: "/dashboard/analytics",     label: "Analytics",      icon: BarChart3,       color: "text-purple-400" },
+  { href: "/dashboard/social",        label: "Social Hub",     icon: Globe,           color: "text-rose-400" },
   { href: "/dashboard/settings",      label: "Settings",       icon: Settings,        color: "text-slate-400" },
 ];
 

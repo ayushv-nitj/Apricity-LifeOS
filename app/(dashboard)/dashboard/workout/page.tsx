@@ -1,3 +1,25 @@
+/**
+ * app/(dashboard)/dashboard/workout/page.tsx — Workout Logger
+ *
+ * "use client" — all state, fetch calls, and interactions happen in the browser.
+ *
+ * Logs workout sessions with type, duration, calories, and optional notes.
+ * Each session is stored as a Workout document in MongoDB.
+ *
+ * Stats computed client-side from the loaded logs:
+ *  - weeklyMinutes: total duration across all logs
+ *  - weeklyCalories: total calories across all logs
+ *  - streak: consecutive days with at least one workout, counting backwards
+ *    from today using a Set of unique date strings
+ *
+ * Streak algorithm:
+ *  1. Build a Set of unique date strings from all log dates
+ *  2. Start from today and walk backwards day by day
+ *  3. Increment streak counter while each day exists in the Set
+ *  4. Stop as soon as a day is missing
+ *
+ * Data source: GET/POST /api/workout, DELETE /api/workout/:id
+ */
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";

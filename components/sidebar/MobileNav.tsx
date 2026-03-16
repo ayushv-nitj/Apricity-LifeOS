@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { signOut } from "next-auth/react";
 import {
   LayoutDashboard, Briefcase, GraduationCap, Dumbbell, Apple,
-  Heart, Users, Target, BarChart3, Settings, LogOut, Zap, Menu, X, BookOpen,
+  Heart, Users, Target, BarChart3, Settings, LogOut, Zap, Menu, X, BookOpen, Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +21,8 @@ const navItems = [
   { href: "/dashboard/goals", label: "Goals", icon: Target },
   { href: "/dashboard/notes", label: "Notes", icon: BookOpen },
   { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
+  { href: "/dashboard/social",    label: "Social Hub", icon: Globe },
+  { href: "/dashboard/settings",  label: "Settings",   icon: Settings },
 ];
 
 export default function MobileNav() {

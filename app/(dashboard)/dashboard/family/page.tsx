@@ -1,3 +1,22 @@
+/**
+ * app/(dashboard)/dashboard/family/page.tsx — Family Bond Tracker
+ *
+ * "use client" — all state, fetch calls, and interactions happen in the browser.
+ *
+ * Similar to the Relationships page but focused on family members.
+ * Uses the same /api/contacts endpoint with `type: "family"` to separate
+ * family entries from relationship contacts in the database.
+ *
+ * "Bond Level" is the family equivalent of "Affinity" — stored as the
+ * `affinity` field in the Contact model but displayed as "Bond Level" here.
+ * When creating a family member, `bondLevel` is mapped to `affinity` in the POST body.
+ *
+ * The card layout is a 3-column grid (vs 2-column for relationships) since
+ * family cards are more compact (centered avatar + name, no notes preview).
+ *
+ * Data source: GET /api/contacts?type=family, POST /api/contacts,
+ *              PATCH /api/contacts/:id, DELETE /api/contacts/:id
+ */
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";

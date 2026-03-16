@@ -1,3 +1,26 @@
+/**
+ * app/(dashboard)/dashboard/tasks/page.tsx — Full Task Manager
+ *
+ * "use client" — all state, fetch calls, and interactions happen in the browser.
+ *
+ * This is the dedicated full-page task manager (vs QuestLog which is a compact
+ * dashboard widget). It provides:
+ *  - Full task list with filter tabs (all / pending / completed / habits)
+ *  - Inline add form with all task fields (title, description, category,
+ *    priority, XP reward, and isHabit toggle)
+ *  - Toggle complete/pending on each task
+ *  - Delete tasks
+ *  - Habit streak badge (🔥 Nd) for tasks with isHabit: true
+ *
+ * Filter logic:
+ *  - "all"       → show every task
+ *  - "pending"   → tasks where status !== "completed"
+ *  - "completed" → tasks where status === "completed"
+ *  - "habits"    → tasks where isHabit === true (regardless of status)
+ *
+ * The `priorities` map gives each priority level a distinct color badge
+ * so the user can visually triage tasks at a glance.
+ */
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";

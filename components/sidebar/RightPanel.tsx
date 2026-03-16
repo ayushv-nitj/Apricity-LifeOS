@@ -1,3 +1,32 @@
+/**
+ * components/sidebar/RightPanel.tsx — Right Sidebar (Character Sheet)
+ *
+ * "use client" — uses useSession, useState, useEffect, and fetch.
+ *
+ * This is the persistent right sidebar visible on xl+ screens. It acts as
+ * the user's "character sheet" in the RPG theme, showing:
+ *
+ *  1. AuthorButton — opens the developer profile modal
+ *  2. Character Card — avatar, username, level badge, editable bio
+ *  3. XP Bar — visual progress toward the next level
+ *  4. Operative Stats — STR/INT/CHA/STM bars derived from task completion
+ *  5. Today's Progress — tasks done today as a percentage bar
+ *  6. Active Streaks — consecutive days of task/habit/study completion
+ *
+ * Stats are computed from task data (not stored in DB):
+ *  - STR: overall task completion count
+ *  - INT: academics tasks completed
+ *  - CHA: relationships + family tasks completed
+ *  - STM: work tasks completed
+ *
+ * Streak calculation (calcStreak):
+ *  - Takes an array of date strings
+ *  - Counts consecutive days going backwards from today
+ *  - Stops as soon as a day is missing
+ *
+ * The bio is editable inline — clicking the pencil icon shows a textarea
+ * with save/cancel buttons. Saving PATCHes /api/user with the new bio.
+ */
 "use client";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
@@ -6,40 +35,52 @@ import { User, Star, Flame, TrendingUp, Edit2, Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AuthorCard, { AuthorButton } from "@/components/dashboard/AuthorCard";
 
+// Shape of the user data returned by GET /api/user
 interface UserData {
   username: string;
-  bio: string;
   level: number;
   xp: number;
+  bio?: string;
   avatar?: string;
 }
 
-const XP_PER_LEVEL = 1000;
-
-interface StreakData { label: string; streak: number; color: string }
+const XP_PER_LEVEL = 100;
 
 function calcStreak(dates: string[]): number {
-  const days = new Set(dates.map(d => new Date(d).toDateString()));
-  let count = 0;
-  const d = new Date();
-  while (days.has(d.toDateString())) { count++; d.setDate(d.getDate() - 1); }
-  return count;
+  if (!dates.length) return 0;
+  const unique = [...new Set(dates.map((d) => new Date(d).toDateString()))].sort(
+    (a, b) => new Date(b).getTime() - new Date(a).getTime()
+  );
+  let streak = 0;
+  let cursor = new Date();
+  cursor.setHours(0, 0, 0, 0);
+  for (const d of unique) {
+    const day = new Date(d);
+    day.setHours(0, 0, 0, 0);
+    if (day.getTime() === cursor.getTime()) {
+      streak++;
+      cursor.setDate(cursor.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  return streak;
 }
 
 export default function RightPanel() {
   const { data: session } = useSession();
   const [user, setUser] = useState<UserData | null>(null);
-  const [editingBio, setEditingBio] = useState(false);
   const [bio, setBio] = useState("");
-  const [todayTasks, setTodayTasks] = useState({ total: 0, done: 0 });
-  const [streaks, setStreaks] = useState<StreakData[]>([]);
+  const [editingBio, setEditingBio] = useState(false);
   const [showAuthor, setShowAuthor] = useState(false);
+  const [todayTasks, setTodayTasks] = useState({ total: 0, done: 0 });
   const [stats, setStats] = useState([
     { label: "STR", color: "bg-red-400", value: 0 },
     { label: "INT", color: "bg-violet-400", value: 0 },
     { label: "CHA", color: "bg-pink-400", value: 0 },
     { label: "STM", color: "bg-emerald-400", value: 0 },
   ]);
+  const [streaks, setStreaks] = useState<{ label: string; streak: number; color: string }[]>([]);
 
   useEffect(() => {
     if (!session) return;

@@ -1,3 +1,28 @@
+/**
+ * app/(dashboard)/dashboard/goals/page.tsx — Goals & Bucket List
+ *
+ * "use client" — all state, fetch calls, and interactions happen in the browser.
+ *
+ * Manages long-term goals organized by category (personal, career, health, etc.).
+ * Each goal has a progress slider (0-100%) that auto-updates the status:
+ *  - 0%   → "not-started"
+ *  - 1-99% → "in-progress"
+ *  - 100% → "completed" (shows "Quest Complete" badge + strikethrough title)
+ *
+ * Inline editing pattern:
+ *  - `editing` state holds the _id of the goal being edited
+ *  - The progress slider only appears when `editing === goal._id`
+ *  - Clicking the Check button saves the progress and closes edit mode
+ *  - Clicking the X button (same Edit2 button when editing) closes without saving
+ *
+ * Category filter:
+ *  - `activeCategory` state filters the displayed goals
+ *  - "all" shows every goal; other values filter by goal.category
+ *
+ * `catColors` and `catIcons` maps give each category a distinct visual identity.
+ *
+ * Data source: GET/POST /api/goals, PATCH/DELETE /api/goals/:id
+ */
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";

@@ -1,3 +1,33 @@
+/**
+ * app/(dashboard)/dashboard/settings/page.tsx — User Settings
+ *
+ * "use client" — uses state, fetch, and the useTheme hook.
+ *
+ * Lets the user configure their profile and app preferences:
+ *
+ *  Profile section:
+ *   - Operative Name (username) — display name shown throughout the app
+ *   - Bio — short description shown on the character card in RightPanel
+ *   - Avatar URL — link to a profile picture
+ *
+ *  Appearance section:
+ *   - Dark / Light mode toggle — uses the useTheme() hook from ThemeProvider
+ *   - Theme change is instant (applied to the <html> class immediately)
+ *   - Theme is also saved to the DB via the PATCH /api/user call on save
+ *
+ *  Notifications section:
+ *   - Toggle switches for daily reminders, streak alerts, weekly report
+ *   - Currently UI-only (no backend persistence for notification prefs yet)
+ *
+ *  Security section:
+ *   - Shows the user's email (read-only)
+ *   - Password change placeholder (not yet implemented)
+ *
+ * The Save button PATCHes /api/user with the form data + current theme.
+ * It briefly shows "✓ Saved" for 2 seconds as confirmation.
+ *
+ * Data source: GET /api/user (on mount), PATCH /api/user (on save)
+ */
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";

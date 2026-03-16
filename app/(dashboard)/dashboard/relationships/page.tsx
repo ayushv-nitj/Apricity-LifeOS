@@ -1,3 +1,22 @@
+/**
+ * app/(dashboard)/dashboard/relationships/page.tsx — Relationships Tracker
+ *
+ * "use client" — all state, fetch calls, and interactions happen in the browser.
+ *
+ * Manages a contact list for important relationships (friends, partners, mentors).
+ * Each contact has an "affinity" score (0-100) visualized as a gradient bar.
+ *
+ * Affinity slider:
+ *  - The slider updates local state on every move (instant visual feedback)
+ *  - The PATCH request only fires on `onMouseUp` / `onTouchEnd` (when released)
+ *  - This avoids spamming the API with a request on every pixel of movement
+ *
+ * The contacts API uses a `type` query param to separate relationship contacts
+ * from family contacts — both use the same /api/contacts endpoint and Contact model.
+ *
+ * Data source: GET /api/contacts?type=relationship, POST /api/contacts,
+ *              PATCH /api/contacts/:id, DELETE /api/contacts/:id
+ */
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";

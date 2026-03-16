@@ -1,3 +1,30 @@
+/**
+ * app/(dashboard)/dashboard/analytics/page.tsx — Life Analytics Dashboard
+ *
+ * "use client" — uses Recharts (browser-only) and fetches data on mount.
+ *
+ * Renders four charts using data from GET /api/analytics:
+ *
+ *  1. Life Balance Radar — hexagonal radar chart showing scores across 6 life areas
+ *     (Health, Career, Learning, Relationships, Mental, Finance). Each axis is 0-100.
+ *
+ *  2. Task Distribution Pie — donut chart showing how completed tasks are split
+ *     across categories (work, academics, workout, etc.). Uses CAT_COLORS map.
+ *
+ *  3. Weekly Bar Chart — grouped bars for tasks and habits completed each day
+ *     of the current week (Mon-Sun).
+ *
+ *  4. 30-Day XP Timeline — area chart showing XP earned per day over the last month.
+ *
+ * Summary cards at the top show:
+ *  - Life Balance Score: average of all radar axis values
+ *  - Weekly XP: sum of xp across weeklyData
+ *  - Tasks Done (7d): sum of tasks across weeklyData
+ *  - Categories Active: number of categories with at least one completed task
+ *
+ * `tooltipStyle` is a shared style object passed to all Recharts Tooltip components
+ * to keep the dark theme consistent across all charts.
+ */
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";

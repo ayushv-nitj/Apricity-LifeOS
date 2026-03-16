@@ -1,3 +1,30 @@
+/**
+ * app/(dashboard)/dashboard/diet/page.tsx — Daily Nutrition Tracker
+ *
+ * "use client" — all state, fetch calls, and interactions happen in the browser.
+ *
+ * Tracks today's meals and macronutrients. Only loads meals for today
+ * (filtered by date in the API query string).
+ *
+ * Macro goals (hardcoded constants):
+ *  - CAL_GOAL = 2200 kcal
+ *  - PROTEIN_GOAL = 150g
+ *  - Carbs reference: 250g (used for the progress bar only)
+ *  - Fat reference: 70g (used for the progress bar only)
+ *
+ * Water tracker:
+ *  - 8 glass buttons rendered with Array.from({ length: 8 })
+ *  - Clicking a glass that's already filled (i < water) resets to that level
+ *  - Clicking an unfilled glass (i >= water) fills up to that glass
+ *  - Water count is local state only — not persisted to the DB
+ *
+ * Macro progress bars:
+ *  - Each bar shows current / goal as a filled percentage
+ *  - Math.min(..., 100) caps the bar at 100% so it doesn't overflow
+ *
+ * Data source: GET /api/meals?date=YYYY-MM-DD, POST /api/meals,
+ *              DELETE /api/meals/:id
+ */
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";

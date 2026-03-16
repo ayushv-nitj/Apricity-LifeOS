@@ -1,8 +1,41 @@
+/**
+ * components/dashboard/AuthorCard.tsx — Developer Profile Modal
+ *
+ * Exports two components:
+ *
+ * 1. AuthorButton — a compact button shown in the RightPanel sidebar.
+ *    Clicking it sets `showAuthor = true` in RightPanel, which renders
+ *    the AuthorCard modal.
+ *
+ * 2. AuthorCard — a full-screen modal overlay with:
+ *    - Animated backdrop (blur + dark overlay)
+ *    - Spring-animated card (scale + fade in)
+ *    - Gradient avatar with initials
+ *    - Name, title, bio with blinking cursor
+ *    - Tech stack skill tags
+ *    - 4 social link cards (Instagram, LinkedIn, GitHub, Email)
+ *      Each link has brand-color glow on hover via inline style transitions
+ *    - Animated top/bottom gradient borders
+ *
+ * The modal closes when:
+ *  - The X button is clicked
+ *  - The backdrop (outside the card) is clicked
+ *    (e.stopPropagation() on the card prevents backdrop clicks from
+ *     bubbling up when clicking inside the card)
+ *
+ * AnimatePresence from Framer Motion enables the exit animation —
+ * without it, components would just disappear instantly when unmounted.
+ *
+ * The `hoveredLink` state tracks which social card is hovered so we can
+ * apply brand-specific colors via inline styles (Tailwind can't do
+ * dynamic colors at runtime).
+ */
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Github, Mail, Instagram, Linkedin, Zap, Code2, Terminal, Star, ExternalLink } from "lucide-react";
 
+// Social link data — each entry has brand-specific colors for hover effects
 const SOCIAL_LINKS = [
   {
     icon: Instagram,
@@ -46,8 +79,13 @@ const SOCIAL_LINKS = [
   },
 ];
 
+// Tech stack tags shown in the "Tech Stack" section
 const SKILLS = ["Next.js", "React", "TypeScript", "MongoDB", "Node.js", "Tailwind"];
 
+/**
+ * AuthorButton — compact trigger button for the RightPanel sidebar.
+ * Accepts an `onClick` prop so the parent (RightPanel) controls the modal state.
+ */
 export function AuthorButton({ onClick }: { onClick: () => void }) {
   return (
     <button
@@ -57,6 +95,7 @@ export function AuthorButton({ onClick }: { onClick: () => void }) {
         background: "rgba(0,245,255,0.04)",
         borderColor: "rgba(0,245,255,0.15)",
       }}
+      // Inline style hover effects — needed because Tailwind can't do dynamic colors
       onMouseEnter={e => {
         e.currentTarget.style.background = "rgba(0,245,255,0.08)";
         e.currentTarget.style.borderColor = "rgba(0,245,255,0.3)";
@@ -66,6 +105,7 @@ export function AuthorButton({ onClick }: { onClick: () => void }) {
         e.currentTarget.style.borderColor = "rgba(0,245,255,0.15)";
       }}
     >
+      {/* Small gradient icon */}
       <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center flex-shrink-0">
         <Code2 className="w-3 h-3 text-white" />
       </div>
@@ -73,17 +113,23 @@ export function AuthorButton({ onClick }: { onClick: () => void }) {
         <p className="text-xs font-mono font-semibold text-cyan-400 truncate">Built by Ayush Verma</p>
         <p className="text-[10px] font-mono" style={{ color: "var(--text-faint)" }}>View developer profile</p>
       </div>
+      {/* Arrow icon — only visible on hover via group-hover */}
       <ExternalLink className="w-3 h-3 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-cyan-400" />
     </button>
   );
 }
 
+/**
+ * AuthorCard — the full-screen modal overlay.
+ * Receives `onClose` from the parent to close itself.
+ */
 export default function AuthorCard({ onClose }: { onClose: () => void }) {
+  // Tracks which social link is currently hovered for brand-color effects
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
 
   return (
     <AnimatePresence>
-      {/* Backdrop */}
+      {/* Backdrop — clicking it closes the modal */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -92,7 +138,7 @@ export default function AuthorCard({ onClose }: { onClose: () => void }) {
         className="fixed inset-0 z-50 flex items-center justify-center p-4"
         style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }}
       >
-        {/* Card — stop click propagation so clicking inside doesn't close */}
+        {/* Card — e.stopPropagation() prevents backdrop click from firing when clicking inside */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -106,12 +152,12 @@ export default function AuthorCard({ onClose }: { onClose: () => void }) {
             boxShadow: "0 0 60px rgba(0,245,255,0.1), 0 0 120px rgba(191,0,255,0.08), 0 25px 50px rgba(0,0,0,0.5)",
           }}
         >
-          {/* Animated top border */}
+          {/* Animated top gradient border */}
           <div className="h-0.5 w-full" style={{
             background: "linear-gradient(90deg, transparent, #00f5ff, #bf00ff, #0080ff, transparent)"
           }} />
 
-          {/* Grid background */}
+          {/* Subtle grid background pattern — purely decorative */}
           <div className="absolute inset-0 opacity-[0.03]" style={{
             backgroundImage: "linear-gradient(rgba(0,245,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,255,1) 1px, transparent 1px)",
             backgroundSize: "30px 30px",
@@ -127,32 +173,32 @@ export default function AuthorCard({ onClose }: { onClose: () => void }) {
               <X className="w-4 h-4" />
             </button>
 
-            {/* Header label */}
+            {/* Section header with horizontal rule */}
             <div className="flex items-center gap-2 mb-5">
               <Terminal className="w-3.5 h-3.5 text-cyan-400" />
               <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">Developer Profile</span>
               <div className="flex-1 h-px" style={{ background: "rgba(0,245,255,0.15)" }} />
             </div>
 
-            {/* Avatar + name */}
+            {/* Avatar + name block */}
             <div className="flex items-center gap-4 mb-5">
-              {/* Avatar */}
               <div className="relative flex-shrink-0">
+                {/* Gradient avatar with initials — placeholder until a real photo is added */}
                 <div className="w-20 h-20 rounded-2xl overflow-hidden"
                   style={{ border: "2px solid rgba(0,245,255,0.3)", boxShadow: "0 0 20px rgba(0,245,255,0.2)" }}>
                   <div className="w-full h-full bg-gradient-to-br from-cyan-400/20 via-purple-500/20 to-blue-600/20 flex items-center justify-center">
                     <span className="text-3xl font-bold font-mono text-cyan-400">AV</span>
                   </div>
                 </div>
-                {/* Online indicator */}
+                {/* Online status indicator */}
                 <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-400 border-2 flex items-center justify-center"
                   style={{ borderColor: "#050a14" }}>
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
                 </div>
               </div>
 
-              {/* Name + title */}
               <div>
+                {/* Gradient text name using CSS background-clip trick */}
                 <h2 className="text-xl font-bold font-mono" style={{
                   background: "linear-gradient(135deg, #00f5ff, #bf00ff)",
                   WebkitBackgroundClip: "text",
@@ -170,15 +216,16 @@ export default function AuthorCard({ onClose }: { onClose: () => void }) {
               </div>
             </div>
 
-            {/* Bio */}
+            {/* Bio with blinking cursor at the end */}
             <div className="rounded-xl p-3 mb-5 font-mono text-xs leading-relaxed"
               style={{ background: "rgba(0,245,255,0.04)", border: "1px solid rgba(0,245,255,0.1)", color: "var(--text-secondary)" }}>
               <span className="text-cyan-400">{">"}</span> Building tools that make life more organized and fun.
               Passionate about clean code, great UX, and turning ideas into reality.
+              {/* animate-pulse makes the cursor blink */}
               <span className="text-purple-400 animate-pulse ml-1">_</span>
             </div>
 
-            {/* Skills */}
+            {/* Tech stack tags */}
             <div className="mb-5">
               <p className="text-[10px] font-mono uppercase tracking-widest mb-2" style={{ color: "var(--text-faint)" }}>
                 Tech Stack
@@ -197,7 +244,7 @@ export default function AuthorCard({ onClose }: { onClose: () => void }) {
               </div>
             </div>
 
-            {/* Social links */}
+            {/* Social links grid — 2 columns */}
             <div>
               <p className="text-[10px] font-mono uppercase tracking-widest mb-2.5" style={{ color: "var(--text-faint)" }}>
                 Connect
@@ -218,6 +265,7 @@ export default function AuthorCard({ onClose }: { onClose: () => void }) {
                       whileTap={{ scale: 0.98 }}
                       className="flex items-center gap-2.5 p-2.5 rounded-xl transition-all cursor-pointer"
                       style={{
+                        // Brand color bg and border on hover, subtle default state
                         background: isHovered ? link.bg : "rgba(255,255,255,0.03)",
                         border: `1px solid ${isHovered ? link.border : "rgba(255,255,255,0.07)"}`,
                         boxShadow: isHovered ? `0 0 15px ${link.glow}` : "none",
@@ -252,7 +300,7 @@ export default function AuthorCard({ onClose }: { onClose: () => void }) {
             </div>
           </div>
 
-          {/* Animated bottom border */}
+          {/* Animated bottom gradient border */}
           <div className="h-0.5 w-full" style={{
             background: "linear-gradient(90deg, transparent, #bf00ff, #00f5ff, transparent)"
           }} />

@@ -1,3 +1,35 @@
+/**
+ * components/dashboard/LifeRadar.tsx — Life Balance Radar Chart (Dashboard Widget)
+ *
+ * "use client" — fetches analytics data and renders a Recharts RadarChart.
+ *
+ * This is the compact dashboard version of the radar chart (also used in
+ * the full Analytics page). It shows 6 life area scores on a hexagonal
+ * radar chart, each axis ranging from 0-100.
+ *
+ * Life areas and how their scores are computed (in /api/analytics):
+ *  - Health:        workout logs + diet tracking activity
+ *  - Career:        work category task completions
+ *  - Learning:      academics category task completions
+ *  - Relationships: relationships + family task completions
+ *  - Mental:        average mood score from Mood logs
+ *  - Finance:       goals category completions (proxy for financial goals)
+ *
+ * FALLBACK data (all zeros) is shown while loading so the chart renders
+ * immediately without a layout shift or empty state.
+ *
+ * `getScoreLabel` maps a 0-100 score to a human-readable label and color:
+ *  - 80+: Excellent (green)
+ *  - 60+: Good (cyan)
+ *  - 40+: Fair (yellow)
+ *  - <40: Needs work (red)
+ *
+ * `CustomTooltip` is a custom Recharts tooltip component that shows the
+ * axis name, score, and label when hovering over a data point.
+ *
+ * The per-axis breakdown below the chart shows mini progress bars for
+ * each life area so the user can see exact values without hovering.
+ */
 "use client";
 import { useEffect, useState } from "react";
 import {

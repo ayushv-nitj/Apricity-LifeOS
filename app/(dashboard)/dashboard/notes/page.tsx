@@ -204,10 +204,13 @@ export default function NotesPage() {
           />
           <div className="flex-1 overflow-y-auto space-y-1 pr-1">
             {filtered.map(note => (
-              <motion.button
+              <motion.div
                 key={note._id}
                 onClick={() => { setActive(note); setSaveStatus("saved"); }}
-                className={`w-full text-left p-3 rounded-lg transition-all group ${
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => e.key === "Enter" && (setActive(note), setSaveStatus("saved"))}
+                className={`w-full text-left p-3 rounded-lg transition-all group cursor-pointer ${
                   active?._id === note._id
                     ? "bg-teal-400/10 border border-teal-400/20"
                     : "hover:bg-white/5 border border-transparent"
@@ -232,7 +235,7 @@ export default function NotesPage() {
                 <p className="text-[10px] mt-1 font-mono" style={{ color: "var(--text-faint)" }}>
                   {new Date(note.updatedAt).toLocaleDateString()}
                 </p>
-              </motion.button>
+              </motion.div>
             ))}
             {filtered.length === 0 && (
               <p className="text-xs font-mono text-center pt-4" style={{ color: "var(--text-muted)" }}>No notes found</p>
