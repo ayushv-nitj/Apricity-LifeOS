@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import { User, Star, Flame, TrendingUp, Edit2, Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import AuthorCard, { AuthorButton } from "@/components/dashboard/AuthorCard";
 
 interface UserData {
   username: string;
@@ -32,6 +33,7 @@ export default function RightPanel() {
   const [bio, setBio] = useState("");
   const [todayTasks, setTodayTasks] = useState({ total: 0, done: 0 });
   const [streaks, setStreaks] = useState<StreakData[]>([]);
+  const [showAuthor, setShowAuthor] = useState(false);
   const [stats, setStats] = useState([
     { label: "STR", color: "bg-red-400", value: 0 },
     { label: "INT", color: "bg-violet-400", value: 0 },
@@ -86,6 +88,12 @@ export default function RightPanel() {
 
   return (
     <aside className="hidden xl:flex flex-col w-72 min-h-screen glass-card border-l border-cyber-border/50 p-5 gap-5">
+      {/* Author button at the top */}
+      <AuthorButton onClick={() => setShowAuthor(true)} />
+
+      {/* Author modal */}
+      {showAuthor && <AuthorCard onClose={() => setShowAuthor(false)} />}
+
       {/* Character Card */}
       <div className="glass-card-purple rounded-xl p-4 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-glow-purple opacity-30 pointer-events-none" />

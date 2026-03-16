@@ -1,3 +1,26 @@
+/**
+ * app/(dashboard)/dashboard/notes/page.tsx — Knowledge Vault (Notes Editor)
+ *
+ * "use client" — required because this page uses hooks, refs, and browser APIs.
+ *
+ * Features:
+ *  - Two-panel layout: note list sidebar on the left, editor on the right
+ *  - Auto-save: saves to MongoDB 1.2 seconds after the user stops typing
+ *  - Manual save: Save button + Ctrl/Cmd+S keyboard shortcut
+ *  - Formatting toolbar: 11 markdown formatting buttons
+ *  - Live title update: the sidebar shows the title as you type
+ *  - Search: filters the note list in real time
+ *
+ * The stale closure problem (and how we solved it):
+ *  A common React bug is when a useEffect captures an old value of state
+ *  in its closure. If we used `active` directly in a setTimeout callback,
+ *  the callback would always save the version of `active` from when the
+ *  timeout was created — not the latest version.
+ *
+ *  Solution: `activeRef` is a ref that always points to the latest `active`.
+ *  Refs don't cause re-renders and are always up-to-date, making them
+ *  perfect for use inside async callbacks and timers.
+ */
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion } from "framer-motion";

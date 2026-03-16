@@ -1,3 +1,23 @@
+/**
+ * app/api/analytics/route.ts — Analytics Data Endpoint
+ *
+ * HTTP Method: GET
+ * URL: /api/analytics
+ * Protected: Yes
+ *
+ * Returns four datasets used by the Analytics page and dashboard widgets:
+ *
+ * 1. weeklyData   — tasks completed, habits done, and XP earned per day (last 7 days)
+ * 2. categoryData — count of tasks per category (for the pie chart)
+ * 3. monthlyXP    — XP earned per day over the last 30 days (for the area chart)
+ * 4. radarData    — life balance scores (0-100) for 6 life dimensions
+ *
+ * Life Radar scoring methodology:
+ *  Each of the 6 axes is computed from its own relevant data sources.
+ *  Scores use a weighted formula: score = Σ(metric / target) * weight * 100
+ *  The `clamp()` function ensures scores stay within 0-100.
+ *  The `score()` helper converts a raw value to a 0-100 percentage of a target.
+ */
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
