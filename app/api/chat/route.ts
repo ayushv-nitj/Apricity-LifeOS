@@ -51,18 +51,18 @@ USER DATA SNAPSHOT:
 - Avg energy (last 7 days): ${avgEnergy}/10
 - Academic subjects: ${academics.map(a => `${a.name} (${a.progress}%, ${a.hoursStudied}h studied)`).join(", ") || "none"}`;
 
-    // Build chat history — skip the initial assistant greeting, Gemini requires history to start with 'user'
-    const history = messages
-      .slice(0, -1)
-      .filter((_: { role: string; content: string }, i: number, arr: { role: string; content: string }[]) => {
-        // Drop leading assistant messages
-        const firstUserIdx = arr.findIndex((m: { role: string }) => m.role === "user");
-        return i >= firstUserIdx;
-      })
-      .map((m: { role: string; content: string }) => ({
-        role: m.role === "assistant" ? "model" : "user",
-        parts: [{ text: m.content }],
-      }));
+    // Gemini requires history to alternate user/model starting with user.
+    // Filter to only real user/assistant pairs (exclude the client-side greeting).
+    const allButLast = messages.slice(0, -1).filter(
+      (m: { role: string }) => m.role === "user" || m.role === "assistant"
+    );
+    // Drop any leading assistant messages
+    let startIdx = 0;
+    while (startIdx < allButLast.length && allButLast[startIdx].role !== "user") startIdx++;
+    const history = allButLast.slice(startIdx).map((m: { role: string; content: string }) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }],
+    }));
 
     const model = genAI.getGenerativeModel({
       model: "gemini-2.0-flash",

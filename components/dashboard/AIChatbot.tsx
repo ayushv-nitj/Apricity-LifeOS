@@ -44,10 +44,12 @@ export default function AIChatbot() {
     setLoading(true);
 
     try {
+      // Only send actual conversation (exclude the initial greeting) to the API
+      const apiMessages = updated.filter(m => !(m.role === "assistant" && m === messages[0]));
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: updated }),
+        body: JSON.stringify({ messages: apiMessages }),
       });
       const data = await res.json();
       if (!res.ok) {
