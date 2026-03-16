@@ -57,7 +57,7 @@ USER DATA SNAPSHOT:
       parts: [{ text: m.content }],
     }));
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     const chat = model.startChat({
       history: [
         { role: "user", parts: [{ text: context }] },
