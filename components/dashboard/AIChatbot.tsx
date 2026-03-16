@@ -50,9 +50,13 @@ export default function AIChatbot() {
         body: JSON.stringify({ messages: updated }),
       });
       const data = await res.json();
-      setMessages(m => [...m, { role: "assistant", content: data.reply || "Sorry, I couldn't process that." }]);
-    } catch {
-      setMessages(m => [...m, { role: "assistant", content: "Connection error. Try again." }]);
+      if (!res.ok) {
+        setMessages(m => [...m, { role: "assistant", content: `Error ${res.status}: ${data.error || "Unknown error"}` }]);
+      } else {
+        setMessages(m => [...m, { role: "assistant", content: data.reply || "Sorry, I couldn't process that." }]);
+      }
+    } catch (err) {
+      setMessages(m => [...m, { role: "assistant", content: `Failed: ${err instanceof Error ? err.message : "Unknown error"}` }]);
     } finally {
       setLoading(false);
     }
